@@ -1,0 +1,93 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8DAF533A-4495-4203-98E2-6397FB2ECFE2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoStandardLibraries>false</NoStandardLibraries>
+    <AssemblyName>ClassLibrary</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>se_Code</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppBase.cs" />
+    <Compile Include="Automata.cs" />
+    <Compile Include="basicCode.cs" />
+    <Compile Include="BasicCode\Program.cs" />
+    <Compile Include="BasicCode\UIexample.cs" />
+    <Compile Include="Component.cs" />
+    <Compile Include="interfaces\IMyLaserAntenna.cs" />
+    <Compile Include="interfaces\IMyRadioAntenna.cs" />
+    <Compile Include="interfaces\IMyTerminalBlock.cs" />
+    <Compile Include="interfaces\IMyTextPanel.cs" />
+    <Compile Include="interfaces\IMyTimerBlock.cs" />
+    <Compile Include="interfaces\ITerminalAction.cs" />
+    <Compile Include="interfaces\MyTransmitTarget.cs" />
+    <Compile Include="Models\GridTerminalSystem.cs" />
+    <Compile Include="Models\ProgrammerBlock.cs" />
+    <Compile Include="Network3\Config\Connection.cs" />
+    <Compile Include="Network3\Config\SConfig.cs" />
+    <Compile Include="Network3\Config\TryConnectionRequest.cs" />
+    <Compile Include="Network3\Config\WifiAntenna.cs" />
+    <Compile Include="Network3\Config\XFinderRouter.cs" />
+    <Compile Include="Network3\Message\Request.cs" />
+    <Compile Include="Network3\Message\SMessage.cs" />
+    <Compile Include="Network3\Network.cs" />
+    <Compile Include="Network3\NetworkComponent.cs" />
+    <Compile Include="Object.cs" />
+    <Compile Include="SResource.cs" />
+    <Compile Include="SystemOb.cs" />
+    <Compile Include="ui\ui.cs" />
+    <Compile Include="ui\UIcursor.cs" />
+    <Compile Include="ui\UIeinteract.cs" />
+    <Compile Include="ui\UIelement.cs" />
+    <Compile Include="ui\UIoptionView.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packagesPy\PackageFile.pyc" />
+    <None Include="packagesPy\__init__.pyc" />
+    <None Include="packagesPy\__pycache__\PackageFile.cpython-36.pyc" />
+    <None Include="packagesPy\__pycache__\__init__.cpython-36.pyc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packagesPy\basiCodePackage.py" />
+    <Content Include="packagesPy\Network2package.py" />
+    <Content Include="packagesPy\NetworkPackage.py" />
+    <Content Include="packagesPy\PackageFile.py" />
+    <Content Include="packagesPy\uiPackage.py" />
+    <Content Include="packagesPy\__init__.py" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
+  <ProjectExtensions>
+    <VisualStudio AllowExistingFolder="true" />
+  </ProjectExtensions>
+</Project>
