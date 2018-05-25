@@ -9,7 +9,7 @@
             "</ui-selectorview>";
         ui.jq("this").Xml(strxml);
         ui.Tick();        
-        System.Console.Write(ui.Render);
+        System.Console.Write(ui.StrRender);
     }
 
 }

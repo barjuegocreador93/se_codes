@@ -46,8 +46,18 @@ internal class Network : AppBase
 
 /*libs*/partial class main {
 
-    Network app = new Network();
+    Network app;
     /*libs*/ProgrammerBlock Me;
+
+    public void Program()
+    {
+        app = new Network();
+        app.CaptureCube = captureCube;
+        app.FilterBlock = _s;
+        app.CustomName = Me.CustomName;        
+        app.Debug = debug;
+        app.Begin();
+    }
 
     /*libs*/ public main() {
 
@@ -57,14 +67,8 @@ internal class Network : AppBase
 
     public void Main(string args)
     {
-        //basicCode
-        app.CaptureCube = captureCube;
-        app.FilterBlock = _s;
-        app.CustomName = Me.CustomName;
+        //basicCode        
         app.Message = args;
-        app.Debug = debug;
-
-        app.Begin();        
         app.Tick();
 
     }

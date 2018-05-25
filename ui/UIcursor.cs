@@ -9,6 +9,9 @@ internal class UIcursor : UIelement
 
     public UIeinteract CursorHoverOption { get; private set; }
 
+    private bool found;
+    private bool startfind;
+
     public override void Tick()
     {
         if(CursorHoverOption==null)
@@ -41,21 +44,123 @@ internal class UIcursor : UIelement
         {
             var kb = UI().KeyBoard;
             var key = kb.GetAttr("value");
+            found = false;
+            startfind = false;
             switch(key)
             {
                 case "up":
-                    MoveCursorUP();
+                    SetAttrs("keyboard", "up");
+                    MoveCursorUP(CursorHoverOption);
                     break;
                 case "down":
-                    MoveCursorDown();
+                    SetAttrs("keyboard", "down");
+                    MoveCursorDown(CursorHoverOption);
                     break;
 
                 case "select":
+                    SetAttrs("keyboard", "select");
                     SelectCursor();
                     break;
             }
         }
         base.Tick();
+    }
+
+    private void MoveCursorDown(Object crs)
+    {
+        
+        if (crs != null && !found)
+        {
+            if (startfind)
+            {
+                if (!found)
+                {
+                    ChangeCursor(crs as UIeinteract);
+                }
+
+                if (!found)
+                {
+                    if (crs.Childs.Count > 0)
+                    {
+                        startfind = true;
+                        MoveCursorDown(crs.Childs[0]);
+                        if (!found)
+                        {
+                            MoveCursorDown(crs.BrotherDown);
+                        }
+                    }
+                    else MoveCursorDown(crs.BrotherDown);
+
+                }
+                if (!found && crs.Parent != null && crs.Parent as UIelement != null)
+                {
+                    MoveCursorDown(crs.Parent.BrotherDown);
+                }
+            }
+
+            if (!startfind)
+            {
+                startfind = true;
+                if (crs.Childs.Count > 0)
+                    MoveCursorDown(crs.Childs[0]);
+                if(!found)
+                    MoveCursorDown(crs.BrotherDown);
+            }
+        }
+        
+    }
+
+    private void MoveCursorUP(Object crs)
+    {
+        
+        if(crs != null && !found)
+        {
+            if (startfind)
+            {
+                if (!found)
+                {
+                    ChangeCursor(crs as UIeinteract);
+                }
+
+                if (!found)
+                {
+                    if (crs.Childs.Count > 0)
+                    {
+                        startfind = true;
+                        MoveCursorUP(crs.Childs[crs.Childs.Count - 1]);
+                        if (!found)
+                        {
+                            MoveCursorUP(crs.BrotherUp);
+                        }
+                    }else  MoveCursorUP(crs.BrotherUp);
+
+                }
+                if (!found && crs.Parent!=null && crs.Parent as UIelement != null)
+                {
+                    MoveCursorUP(crs.Parent.BrotherUp);
+                }
+            }            
+
+            if (!startfind)
+            {
+                startfind = true;
+                MoveCursorUP(crs.BrotherUp);                
+            }
+            
+        }
+
+    }
+
+    private void ChangeCursor(UIeinteract bei)
+    {
+        if(bei!=null)
+        if (bei.GetAttr("visible") == "true")
+        {
+            bei.SetAttrs("hover", "true");
+            CursorHoverOption.SetAttrs("hover", "false");
+            CursorHoverOption = bei;
+            found = true;
+        }
     }
 
     private void FindFristOption(List<UIeinteract> uiol)
@@ -65,6 +170,21 @@ internal class UIcursor : UIelement
             var op = uiol[0];
             if (op.GetAttr("visible") == "true")
             {
+                if (CursorHoverOption != null) CursorHoverOption.SetAttrs("hover", "false");
+                op.SetAttrs("hover", "true");
+                CursorHoverOption = op;
+            }
+        }
+    }
+
+    private void FindLastOption(List<UIeinteract> uiol)
+    {
+        if (uiol.Count > 0)
+        {
+            var op = uiol[uiol.Count-1];
+            if (op.GetAttr("visible") == "true")
+            {
+                if (CursorHoverOption != null) CursorHoverOption.SetAttrs("hover", "false");
                 op.SetAttrs("hover", "true");
                 CursorHoverOption = op;
             }
@@ -77,127 +197,5 @@ internal class UIcursor : UIelement
             CursorHoverOption.Click();
     }
 
-    private void MoveCursorDown()
-    {
-        if(CursorHoverOption!=null)
-        {           
-            var crs = CursorHoverOption;
-            crs.SetAttrs("hover", "false");
-            CursorHoverOption = null;
-            FindNextCursorDown(crs);
-            FindNextCursorParentDown(crs.Parent);
-            if(CursorHoverOption == null)
-            {
-                List<UIeinteract> uiol = UI().FindAKindOfChilds<UIeinteract>();
-                FindFristOption(uiol);
-            }
-        }
-    }
-
-    private void FindNextCursorParentDown(Object crs)
-    {
-        if (CursorHoverOption == null && crs as UI == null && crs != null)
-        {
-            FindNextCursorDown(crs.BrotherDown);
-            if (CursorHoverOption == null)
-            {
-                FindNextCursorParentDown(crs.Parent);
-            }
-        }
-    }
-
-    private void FindNextCursorDown(Object crs)
-    {
-        if(CursorHoverOption == null && crs != null)
-        {
-            if(crs.Childs.Count>0)
-            {
-                var op = crs.Childs[0];
-                if(op as UIeinteract != null)
-                {
-                   if( op.GetAttr("visible")=="true")
-                    {
-                        
-                        CursorHoverOption = op as UIeinteract;
-                    }
-                }
-                FindNextCursorDown(op);
-                if (CursorHoverOption == null && crs.BrotherDown!=null)
-                {
-                    FindNextCursorDown(crs.BrotherDown);
-                }
-                
-            }            
-        }
-    }
-
-    private void MoveCursorUP()
-    {
-        if (CursorHoverOption != null)
-        {
-            var crs = CursorHoverOption;
-            crs.SetAttrs("hover", "false");
-            CursorHoverOption = null;
-            FindNextCursorUp(crs.BrotherUp);
-            FindNextCursorParentUp(crs.Parent);
-            if (CursorHoverOption == null)
-            {
-                List<UIeinteract> uiol = UI().FindAKindOfChilds<UIeinteract>();
-                FindLastOption(uiol);
-            }
-        }
-    }
-
-    private void FindLastOption(List<UIeinteract> uiol)
-    {
-        if (uiol.Count > 0)
-        {
-            var op = uiol[uiol.Count-1];
-            if (op.GetAttr("visible") == "true")
-            {
-                op.SetAttrs("hover", "true");
-                CursorHoverOption = op;
-            }
-        }
-    }
-
-    private void FindNextCursorParentUp(Object crs)
-    {
-        if (CursorHoverOption == null && crs as UI == null && crs != null)
-        {
-            FindNextCursorDown(crs.BrotherUp);
-            if (CursorHoverOption == null)
-            {
-                FindNextCursorParentDown(crs.Parent);
-            }
-        }
-    }
-
-    private void FindNextCursorUp(Object crs)
-    {
-        if (CursorHoverOption == null)
-        {
-            if (crs != null)
-            {
-                var op = crs;
-                if (op as UIeinteract != null)
-                {
-                    if (op.GetAttr("visible") == "true")
-                    {
-
-                        CursorHoverOption = op as UIeinteract;
-                    }
-                }                
-                if (CursorHoverOption == null )
-                {
-                    for(var i= crs.Childs.Count -1;i>-1 && CursorHoverOption == null; i--)
-                    {                       
-                       FindNextCursorUp(crs.Childs[i]);               
-                        
-                    }                   
-                }
-                
-            }
-        }
-    }
+    
 }

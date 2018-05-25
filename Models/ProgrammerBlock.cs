@@ -9,3 +9,11 @@
    
     public ITerminalAction GetActionWithName(string name) { return null; }
 }
+
+partial class main
+{
+    public static void Echo(string s)
+    {
+
+    }
+}

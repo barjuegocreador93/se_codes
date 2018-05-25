@@ -1,8 +1,8 @@
 ﻿/*libs*/using System;
 
-internal class UI : Object
+internal class UI : UIelement
 {    
-    public string Render { get; private set; }
+    public string StrRender { get; private set; }
     public UIKeyBoard KeyBoard { get; set; }
     public UIcursor Cursor { get; protected set; }
 
@@ -29,21 +29,17 @@ internal class UI : Object
             case "ui-element":
                 return new UIelement();
 
-            case "ui-eiteract":
+            case "ui-einteract":
                 return new UIeinteract();
         }
         return null;
     }
 
     public override void Tick()
-    {
-        Cursor = null;
-        jq("this").Xml(ChildsToString());
-        if(Cursor==null)
-        {
-            Cursor = new UIcursor();
-            AddChild(Cursor);
-        }
+    {       
+        
+        Cursor = new UIcursor();
+        AddChild(Cursor);        
         base.Tick();
         ForChilds(uielements);
     }
@@ -64,7 +60,7 @@ internal class UI : Object
         }
         if (uie!= null)
         {           
-           Render += uie.GlobalRender();
+           StrRender += uie.GlobalRender();
         }
         return 0;
     }
@@ -85,12 +81,13 @@ internal class UIKeyBoard : Object
         var ui = Parent as UI;
         if(ui!=null)
         {
-            if(ui.VarAttrs["key"]==VarAttrs["key"])
+            if(ui.VarAttrs["key"]==VarAttrs["key"] && Parent.VarAttrs["name"]==GetAttr("ui-target"))
             {
                 ui.KeyBoard = this;
             }
+            End();
         }
-        End();
+        
     }
     
 }

@@ -234,7 +234,9 @@ internal class Object
 
     public string GetAttr(string attr)
     {
-        return VarAttrs[attr];
+        if (VarAttrs.ContainsKey(attr))
+            return VarAttrs[attr];
+        return "";
     }
 
 
