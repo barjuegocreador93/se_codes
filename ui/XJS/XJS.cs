@@ -1,27 +1,25 @@
 ﻿/*libs*/using System;using System.Collections.Generic;using System.Linq;using System.Text;
 
-
-
+//require XUI framework
+//add-XJS.Script.cs
+//add-XJS.Parser.cs
+//add-Types/Types.cs
 internal partial class XJS : XUI
-{
+{   
     
-    public class Base : XML.XMLTree, IObject
+    public class Base : XML.XMLTree
     {
         public Base()
         {
             Type = "base";
             
-        }
-
-        public virtual void Begin(){}
-
-        public virtual void End(){}
+        }       
 
         public virtual void Tick()
         {
             foreach(XML.XMLTree v in Children)
             {
-                var b = v as IObject;
+                var b = v as Base;
                 if(b!=null)
                 {
                     b.Tick();
@@ -37,7 +35,6 @@ internal partial class XJS : XUI
             Type = "global";
             AddChild(new Types.Int());
         }
-
        
     }
 

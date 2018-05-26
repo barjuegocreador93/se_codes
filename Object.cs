@@ -2,7 +2,13 @@
 /*libs*/using System;
 /*libs*/using System.Collections.Generic;
 
-//add-IObject.cs
+internal interface IObject
+{
+    void Begin();
+    void End();
+    void Tick();
+}
+
 internal class Object : IObject
 {
     public Object Parent { get; protected set; }

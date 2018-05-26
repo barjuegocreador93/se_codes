@@ -63,7 +63,7 @@ internal partial class MyExampleApp
             switch(typeName)
             {
                 case "component-ui":
-                    return new ComponentUI();
+                    return new TextPanelUI();
             }
             return null;
         }
@@ -76,7 +76,7 @@ internal partial class MyExampleApp
 
         private int uis(Object v, int i)
         {
-            var ui = v as ComponentUI;
+            var ui = v as TextPanelUI;
             if(ui!=null)
                 ui.KeyPress((Parent as MyApp).Args);
             return 0;

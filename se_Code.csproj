@@ -52,7 +52,6 @@
     <Compile Include="interfaces\IMyTimerBlock.cs" />
     <Compile Include="interfaces\ITerminalAction.cs" />
     <Compile Include="interfaces\MyTransmitTarget.cs" />
-    <Compile Include="IObject.cs" />
     <Compile Include="Models\GridTerminalSystem.cs" />
     <Compile Include="Models\ProgrammerBlock.cs" />
     <Compile Include="Network3\Config\Connection.cs" />
@@ -69,8 +68,10 @@
     <Compile Include="SystemOb.cs" />
     <Compile Include="ui\ui.cs" />
     <Compile Include="ui\XJS\Types\Int.cs" />
+    <Compile Include="ui\XJS\Types\Types.cs" />
     <Compile Include="ui\XJS\XJS.cs" />
     <Compile Include="ui\XJS\XJS.Script.cs" />
+    <Compile Include="ui\XJS\XJS.Pareser.cs" />
     <Compile Include="ui\XUI.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -4,13 +4,13 @@
 /*libs*/using System;
 /*libs*/using System.Collections.Generic;
 
-internal class ComponentUI : SResource.CResourceItem
+internal class TextPanelUI : SResource.CResourceItem
 {
     public XUI.XML.UIController ui { get; set;}
     public IMyTextPanel textPanel { get; private set; }
     public string strXML { get; private set; }
 
-    public ComponentUI()
+    public TextPanelUI()
     {
         Type = "component-ui";
         SetAttribute("name", "");
@@ -100,12 +100,12 @@ partial class KeyPress : CComponet
 
     public override void Tick()
     {
-        var cui = Parent as ComponentUI;
+        var cui = Parent as TextPanelUI;
         if (cui != null)
         {            
             if(Parent.GetAttribute("key")==GetAttribute("secret")&& Parent.GetAttribute("name") == GetAttribute("ui-target"))
             {
-                cui.AppBase.Debug(GetAttribute("key"));
+                
                 cui.ui.Call(new List<string>() { "key",GetAttribute("key") });
                 cui.UIrender();
             }
