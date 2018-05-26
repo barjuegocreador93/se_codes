@@ -53,6 +53,8 @@ internal partial class MyExampleApp
     {
         public override void Begin()
         {
+            //On Me.CustomData 
+            //<component-ui name='ui-tp' key='1234' />
             SetAttribute("name", AppBase.GetAttribute("name"));
             base.Begin();
         }

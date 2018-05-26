@@ -86,7 +86,6 @@ partial class KeyPress : CComponet
         //<keypress ui-target='myUi' key='down' secret='1234'/>
         //<keypress ui-target='myUi' key='right/submit' secret='1234'/>
         //<keypress ui-target='myUi' key='left/abort' secret='1234'/>
-
         Type = "keypress";
         SetAttribute("key", "");
         SetAttribute("ui-target", "");
