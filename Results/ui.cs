@@ -6,7 +6,7 @@
     {
         //keyboard:
         //<keypress ui-target='myUi' key='up' secret='1234'/>
-        //<keypress ui-target='myUi' key='down' secret='1234'/>
+        //<keypress ui-target='ui-tp' key='down' secret='1234'/>
         //<keypress ui-target='myUi' key='right/submit' secret='1234'/>
         //<keypress ui-target='myUi' key='left/abort' secret='1234'/>
 
@@ -50,6 +50,8 @@ internal partial class MyExampleApp
     {
         public override void Begin()
         {
+            //On Me.CustomData 
+            //<component-ui name='ui-tp' key='1234' />
             SetAttribute("name", AppBase.GetAttribute("name"));
             base.Begin();
         }
@@ -146,6 +148,11 @@ internal class ComponentUI : SResource.CResourceItem
     {
         ui = XUI.XML.UIController.FromXML(strXML);
         ui.ApplyScreenProperties(textPanel);
+        UIrender();
+    }
+
+    public virtual void UIrender()
+    {
         ui.RenderTo(textPanel);
     }
 
@@ -170,7 +177,6 @@ partial class KeyPress : CComponet
         //<keypress ui-target='myUi' key='down' secret='1234'/>
         //<keypress ui-target='myUi' key='right/submit' secret='1234'/>
         //<keypress ui-target='myUi' key='left/abort' secret='1234'/>
-
         Type = "keypress";
         SetAttribute("key", "");
         SetAttribute("ui-target", "");
@@ -186,6 +192,7 @@ partial class KeyPress : CComponet
             {
                 cui.AppBase.Debug(GetAttribute("key"));
                 cui.ui.Call(new List<string>() { "key",GetAttribute("key") });
+                cui.UIrender();
             }
         }
         End();

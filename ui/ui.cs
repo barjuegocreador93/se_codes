@@ -1,6 +1,7 @@
 ﻿//add-XUI.cs
 
 
+/*libs*/using System;
 /*libs*/using System.Collections.Generic;
 
 internal class ComponentUI : SResource.CResourceItem
@@ -62,6 +63,11 @@ internal class ComponentUI : SResource.CResourceItem
     {
         ui = XUI.XML.UIController.FromXML(strXML);
         ui.ApplyScreenProperties(textPanel);
+        UIrender();
+    }
+
+    public virtual void UIrender()
+    {
         ui.RenderTo(textPanel);
     }
 
@@ -101,6 +107,7 @@ partial class KeyPress : CComponet
             {
                 cui.AppBase.Debug(GetAttribute("key"));
                 cui.ui.Call(new List<string>() { "key",GetAttribute("key") });
+                cui.UIrender();
             }
         }
         End();
