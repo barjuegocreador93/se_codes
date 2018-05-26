@@ -11,6 +11,8 @@ internal class AppBase : Object
     private bool beginRun;
     private bool endRun;
 
+    public Func<string, string> Debug { get; internal set; }
+
     public Func<string, IMyTerminalBlock> CaptureCube;
     public Func<string, Func<IMyTerminalBlock, bool>, string> FilterBlock;
 
@@ -69,4 +71,5 @@ internal class AppBase : Object
         accion.Apply(objeto);
     }
 
+    
 }

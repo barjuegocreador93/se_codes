@@ -8,7 +8,7 @@
     {
         //keyboard:
         //<keypress ui-target='myUi' key='up' secret='1234'/>
-        //<keypress ui-target='myUi' key='down' secret='1234'/>
+        //<keypress ui-target='ui-tp' key='down' secret='1234'/>
         //<keypress ui-target='myUi' key='right/submit' secret='1234'/>
         //<keypress ui-target='myUi' key='left/abort' secret='1234'/>
 
@@ -41,7 +41,7 @@ internal partial class MyExampleApp
         }
 
         public string Args { get; internal set; }
-        public Func<string, string> Debug { get; internal set; }
+        
 
         public override void Tick()
         {
@@ -53,7 +53,7 @@ internal partial class MyExampleApp
     {
         public override void Begin()
         {
-            SetAttribute("name", GetAppBase().GetAttribute("name"));
+            SetAttribute("name", AppBase.GetAttribute("name"));
             base.Begin();
         }
         public override Object Types(string typeName)

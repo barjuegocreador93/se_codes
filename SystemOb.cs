@@ -28,9 +28,12 @@ internal class SystemOb : Object
         return data;
     }
 
-    public AppBase GetAppBase()
+    public AppBase AppBase
     {
-        return Parent as AppBase;
+        get
+        {
+            return Parent as AppBase;
+        }
     }
 
     public override void Tick()

@@ -8,8 +8,8 @@
         return GridTerminalSystem.GetBlockWithName(_obj);
     }
 
-    string debug(string n)
-    {
+   internal string debug(string n)
+   {
         Echo(n);
         return n;
     }

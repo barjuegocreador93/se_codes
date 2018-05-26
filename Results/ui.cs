@@ -16,6 +16,7 @@
         //func to take blocks by name
         myApp.CaptureCube = captureCube;
         myApp.SetAttribute("name", Me.CustomName);
+        myApp.Debug = debug;
         myApp.Begin();
     }
 
@@ -37,6 +38,7 @@ internal partial class MyExampleApp
         }
 
         public string Args { get; internal set; }
+        
 
         public override void Tick()
         {
@@ -48,7 +50,7 @@ internal partial class MyExampleApp
     {
         public override void Begin()
         {
-            SetAttribute("name", GetAppBase().GetAttribute("name"));
+            SetAttribute("name", AppBase.GetAttribute("name"));
             base.Begin();
         }
         public override Object Types(string typeName)
@@ -84,6 +86,7 @@ internal partial class MyExampleApp
 
 
 
+
 internal class ComponentUI : SResource.CResourceItem
 {
     public XUI.XML.UIController ui { get; set;}
@@ -99,7 +102,7 @@ internal class ComponentUI : SResource.CResourceItem
 
     public override void Begin()
     {
-        Block = GetAppBase().GetGemeObject<IMyTerminalBlock>(GetAttribute("name"));
+        Block = AppBase.GetGemeObject<IMyTerminalBlock>(GetAttribute("name"));
         if (Block != null)
         {
             strXML = Block.CustomData;
@@ -158,34 +161,46 @@ internal class ComponentUI : SResource.CResourceItem
 }
 
 
-partial class KeyPress :Object
+partial class KeyPress : CComponet
 {
     public KeyPress()
     {
+        //keyboard:
+        //<keypress ui-target='myUi' key='up' secret='1234'/>
+        //<keypress ui-target='myUi' key='down' secret='1234'/>
+        //<keypress ui-target='myUi' key='right/submit' secret='1234'/>
+        //<keypress ui-target='myUi' key='left/abort' secret='1234'/>
+
         Type = "keypress";
         SetAttribute("key", "");
-        SetAttribute("ui-taget", "");
+        SetAttribute("ui-target", "");
         SetAttribute("secret", "");
     }
 
     public override void Tick()
     {
-        if(Parent as ComponentUI !=null)
-        {
+        var cui = Parent as ComponentUI;
+        if (cui != null)
+        {            
             if(Parent.GetAttribute("key")==GetAttribute("secret")&& Parent.GetAttribute("name") == GetAttribute("ui-target"))
             {
-                var cui = Parent as ComponentUI;
-                cui.ui.KeyPress(GetAttribute("key"));
+                cui.AppBase.Debug(GetAttribute("key"));
+                cui.ui.Call(new List<string>() { "key",GetAttribute("key") });
             }
         }
         End();
     }
+
+    
+
 }
 
 internal class AppBase : Object
 {
     private bool beginRun;
     private bool endRun;
+
+    public Func<string, string> Debug { get; internal set; }
 
     public Func<string, IMyTerminalBlock> CaptureCube;
     public Func<string, Func<IMyTerminalBlock, bool>, string> FilterBlock;
@@ -245,6 +260,7 @@ internal class AppBase : Object
         accion.Apply(objeto);
     }
 
+    
 }
 public class XUI
 {
@@ -285,9 +301,12 @@ internal class SystemOb : Object
         return data;
     }
 
-    public AppBase GetAppBase()
+    public AppBase AppBase
     {
-        return Parent as AppBase;
+        get
+        {
+            return Parent as AppBase;
+        }
     }
 
     public override void Tick()
@@ -338,14 +357,45 @@ internal class Component : Object
         
     }
 
-    public SystemOb GetSystem()
+    public SystemOb System
     {
-        return Parent as SystemOb;
+        get
+        {
+            return Parent as SystemOb;
+        }
     }
 
-    public AppBase GetAppBase()
+    public AppBase AppBase
     {
-        return GetSystem().Parent as AppBase;
+        get
+        { return System.Parent as AppBase; }
+    }
+}
+
+
+internal class CComponet : Object
+{
+    public CComponet()
+    {
+        Type = "CComponent";
+    }
+
+    public Component Componet
+    {
+        get
+         { return Parent as Component; } 
+    }
+
+    public SystemOb System
+    {
+        get
+         { return Componet.System; } 
+    }
+
+    public AppBase AppBase
+    {
+        get
+         { return Componet.AppBase; } 
     }
 }
 
@@ -721,8 +771,8 @@ internal class Object
         return GridTerminalSystem.GetBlockWithName(_obj);
     }
 
-    string debug(string n)
-    {
+   internal string debug(string n)
+   {
         Echo(n);
         return n;
     }
@@ -1106,7 +1156,7 @@ internal class SResource : SystemOb
 
     public override void Tick()
     {
-        Block = GetAppBase().GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
+        Block = AppBase.GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
         if (Block != null)
         {
             if(Text != Block.CustomData)
@@ -1150,7 +1200,7 @@ internal class SResource : SystemOb
 
         public override void Tick()
         {
-            Block = GetAppBase().GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
+            Block = AppBase.GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
             if (Block != null)
             {
                 OnWorking();

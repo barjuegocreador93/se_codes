@@ -1,6 +1,8 @@
 ﻿//add-XUI.cs
 
 
+/*libs*/using System.Collections.Generic;
+
 internal class ComponentUI : SResource.CResourceItem
 {
     public XUI.XML.UIController ui { get; set;}
@@ -16,7 +18,7 @@ internal class ComponentUI : SResource.CResourceItem
 
     public override void Begin()
     {
-        Block = GetAppBase().GetGemeObject<IMyTerminalBlock>(GetAttribute("name"));
+        Block = AppBase.GetGemeObject<IMyTerminalBlock>(GetAttribute("name"));
         if (Block != null)
         {
             strXML = Block.CustomData;
@@ -75,10 +77,16 @@ internal class ComponentUI : SResource.CResourceItem
 }
 
 
-partial class KeyPress :Object
+partial class KeyPress : CComponet
 {
     public KeyPress()
     {
+        //keyboard:
+        //<keypress ui-target='myUi' key='up' secret='1234'/>
+        //<keypress ui-target='myUi' key='down' secret='1234'/>
+        //<keypress ui-target='myUi' key='right/submit' secret='1234'/>
+        //<keypress ui-target='myUi' key='left/abort' secret='1234'/>
+
         Type = "keypress";
         SetAttribute("key", "");
         SetAttribute("ui-target", "");
@@ -87,14 +95,18 @@ partial class KeyPress :Object
 
     public override void Tick()
     {
-        if(Parent as ComponentUI !=null)
-        {
+        var cui = Parent as ComponentUI;
+        if (cui != null)
+        {            
             if(Parent.GetAttribute("key")==GetAttribute("secret")&& Parent.GetAttribute("name") == GetAttribute("ui-target"))
             {
-                var cui = Parent as ComponentUI;
-                cui.ui.KeyPress(GetAttribute("key"));
+                cui.AppBase.Debug(GetAttribute("key"));
+                cui.ui.Call(new List<string>() { "key",GetAttribute("key") });
             }
         }
         End();
     }
+
+    
+
 }

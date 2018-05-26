@@ -15,7 +15,7 @@ internal class SConfig : NSResource
     public override void Begin()
     {
         SetAttribute("name", GetNework.CustomName);
-        Block = GetAppBase().GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
+        Block = AppBase.GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
         if (Block != null)
         {
             base.Begin();

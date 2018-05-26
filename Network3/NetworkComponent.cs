@@ -2,7 +2,7 @@
 {
     public Network GetNetwork
     {
-        get { return GetAppBase() as Network; }
+        get { return AppBase as Network; }
     }
 }
 
@@ -10,7 +10,7 @@ internal class NSystem : SystemOb
 {
     public Network GetNework
     {
-        get { return GetAppBase() as Network; }
+        get { return AppBase as Network; }
     }
 }
 
@@ -19,14 +19,14 @@ internal class NSResource : SResource
 {
     public Network GetNework
     {
-       get { return GetAppBase() as Network; }
+       get { return AppBase as Network; }
     }
 
     internal class NCResourceItem : CResourceItem
     {
         public Network GetNework
         {
-            get { return GetAppBase() as Network; }
+            get { return AppBase as Network; }
         }
     }
 }
@@ -34,18 +34,21 @@ internal class NSResource : SResource
 internal class NCComponet : Object
 {
     public Component GetComponent { get { return Parent as Component;  } }
-    public AppBase GetAppBase()
+    public AppBase AppBase
     {
-        return GetComponent.GetAppBase();
+        get
+        {
+            return GetComponent.AppBase;
+        }
     }
 
     public SystemOb GetSystem()
     {
-        return GetComponent.GetSystem();
+        return GetComponent.System;
     }
 
     public Network GetNetwork
     {
-        get {return  GetAppBase() as Network; }
+        get {return  AppBase as Network; }
     }
 }

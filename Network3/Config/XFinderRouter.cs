@@ -20,7 +20,7 @@ internal class XFinderRouter : NSResource.NCResourceItem
     {
         InitVars();
         base.Begin();
-        Block = GetAppBase().GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
+        Block = AppBase.GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
         if (Block!=null)
         {
             Text = Block.CustomData;
@@ -59,7 +59,7 @@ internal class XFinderRouter : NSResource.NCResourceItem
         }
 
        
-        Block = GetAppBase().GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
+        Block = AppBase.GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
         if(Block!=null)
         {
             if (Text != Block.CustomData)

@@ -15,7 +15,7 @@
     public override void Begin()
     {
         Local_ = new Local(this);
-        GetSystem().AddChild(Local_);
+        System.AddChild(Local_);
     }
 
     public override void Tick()

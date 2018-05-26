@@ -14,7 +14,7 @@ internal class SResource : SystemOb
 
     public override void Tick()
     {
-        Block = GetAppBase().GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
+        Block = AppBase.GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
         if (Block != null)
         {
             if(Text != Block.CustomData)
@@ -58,7 +58,7 @@ internal class SResource : SystemOb
 
         public override void Tick()
         {
-            Block = GetAppBase().GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
+            Block = AppBase.GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
             if (Block != null)
             {
                 OnWorking();

@@ -9,8 +9,7 @@ internal class Network : AppBase
     public string Message;
 
     public SConfig sConfig { get; private set; }
-    public SMessage sMessage { get; private set; }
-    public Func<string, string> Debug { get; internal set; }
+    public SMessage sMessage { get; private set; }    
     public bool ReTick { get; internal set; }
 
     public Network()

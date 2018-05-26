@@ -11,13 +11,44 @@ internal class Component : Object
         
     }
 
-    public SystemOb GetSystem()
+    public SystemOb System
     {
-        return Parent as SystemOb;
+        get
+        {
+            return Parent as SystemOb;
+        }
     }
 
-    public AppBase GetAppBase()
+    public AppBase AppBase
     {
-        return GetSystem().Parent as AppBase;
+        get
+        { return System.Parent as AppBase; }
+    }
+}
+
+
+internal class CComponet : Object
+{
+    public CComponet()
+    {
+        Type = "CComponent";
+    }
+
+    public Component Componet
+    {
+        get
+         { return Parent as Component; } 
+    }
+
+    public SystemOb System
+    {
+        get
+         { return Componet.System; } 
+    }
+
+    public AppBase AppBase
+    {
+        get
+         { return Componet.AppBase; } 
     }
 }
