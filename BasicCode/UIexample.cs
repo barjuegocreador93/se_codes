@@ -18,6 +18,7 @@
         //func to take blocks by name
         myApp.CaptureCube = captureCube;
         myApp.SetAttribute("name", Me.CustomName);
+        myApp.Debug = debug;
         myApp.Begin();
     }
 
@@ -40,6 +41,7 @@ internal partial class MyExampleApp
         }
 
         public string Args { get; internal set; }
+        public Func<string, string> Debug { get; internal set; }
 
         public override void Tick()
         {

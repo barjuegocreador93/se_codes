@@ -75,13 +75,13 @@ internal class ComponentUI : SResource.CResourceItem
 }
 
 
-class KeyPress :Object
+partial class KeyPress :Object
 {
     public KeyPress()
     {
         Type = "keypress";
         SetAttribute("key", "");
-        SetAttribute("ui-taget", "");
+        SetAttribute("ui-target", "");
         SetAttribute("secret", "");
     }
 
