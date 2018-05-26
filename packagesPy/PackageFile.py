@@ -1,6 +1,7 @@
 
 
-#coding: utf8
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 class PackageFile():
 
@@ -37,7 +38,8 @@ class PackageFile():
             code.append(lines)
             d.close()
 
-        f = open(self.file,'w')
+        f = open(self.file,'w', encoding="utf-8")
         for i in code:
+            print(i)
             f.write(str(i))
         f.close()

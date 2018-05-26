@@ -6,39 +6,38 @@
 internal class Object
 {
     public Object Parent { get; protected set; }
-    public List<Object> Childs { get; set; }
+    public List<Object> Children { get; set; }
     
-    public string ObjectType { get; protected set; }
+    public string Type { get; protected set; }
     public Object BrotherDown { get; private set; }
     public Object BrotherUp { get; private set; }
 
     private int deep;
     protected bool deletion;
     public Dictionary<string, string> VarAttrs;    
-    public string Text;
+    
     public Object()
     {
-        Childs = new List<Object>();
+        Children = new List<Object>();
         VarAttrs = new Dictionary<string, string>();
         Parent = null;
         deletion = false;        
-        ObjectType = "Object";
-        deep = 0;
-        Text = "";
+        Type = "Object";
+        deep = 0;        
 
     }
 
-    public void AddChild(Object obj)
+    public virtual void AddChild(Object obj)
     {
         if (obj != null)
         {
             obj.Parent = this;
-            if(Childs.Count>0)
+            if(Children.Count>0)
             {
-                Childs[Childs.Count - 1].BrotherDown = obj;
-                obj.BrotherUp = Childs[Childs.Count - 1];
+                Children[Children.Count - 1].BrotherDown = obj;
+                obj.BrotherUp = Children[Children.Count - 1];
             }
-            Childs.Add(obj);
+            Children.Add(obj);
             obj.deep = deep + 1;
         }
     }
@@ -74,8 +73,8 @@ internal class Object
 
     public void RemoveChildAt(int i)
     {
-        var bup = Childs[i].BrotherUp;
-        var bdwn = Childs[i].BrotherDown;
+        var bup = Children[i].BrotherUp;
+        var bdwn = Children[i].BrotherDown;
         if(bup != null && bdwn!=null)
         {
             bup.BrotherDown = bdwn;
@@ -87,7 +86,7 @@ internal class Object
                 bup.BrotherDown = bdwn;
             }
         }
-        Childs.RemoveAt(i);
+        Children.RemoveAt(i);
     }
 
     public virtual void End()
@@ -113,19 +112,19 @@ internal class Object
 
     protected void ShufleByTow<T>(Func<T, T, int> n, T sys1 = null, T sys2 = null, int i = 0, int j = 1) where T : Object
     {
-        if (i < Childs.Count)
+        if (i < Children.Count)
         {
             if (sys1 == null)
             {
-                sys1 = Childs[i] as T;
+                sys1 = Children[i] as T;
                 if (sys1 == null)
                     ShufleByTow<T>( n, null, null, i + 1, i + 2);
             }
-            if (j < Childs.Count)
+            if (j < Children.Count)
             {
                 if (sys2 == null && sys1 != null)
                 {
-                    sys2 = Childs[j] as T;
+                    sys2 = Children[j] as T;
                     ShufleByTow( n, sys1, sys2, i, j + 1);
                 }
             }
@@ -142,11 +141,11 @@ internal class Object
 
     public void ForChilds(Func<Object,int,int> n,int i=0, int size = 0)
     {
-        size = Childs.Count;
-        if(i<Childs.Count)
+        size = Children.Count;
+        if(i<Children.Count)
         {
-            n(Childs[i],i);
-            if(size>Childs.Count)
+            n(Children[i],i);
+            if(size>Children.Count)
                 ForChilds(n, i);
             else
                 ForChilds(n, i+1);
@@ -155,9 +154,9 @@ internal class Object
 
     public void ChangeAllChildsAttr(string attr, string value)
     {
-        foreach(Object v in Childs)
+        foreach(Object v in Children)
         {
-            v.SetAttrs(attr, value);
+            v.SetAttribute(attr, value);
             v.ChangeAllChildsAttr(attr, value);
         }
     }
@@ -167,7 +166,7 @@ internal class Object
     public List<Object> FindChildByName(string name)
     {
         List<Object> result = new List<Object>();
-        foreach (Object n in Childs)
+        foreach (Object n in Children)
         {
             if (n.VarAttrs.ContainsKey("name"))
                 if(n.VarAttrs["name"]==name)
@@ -179,7 +178,7 @@ internal class Object
     public List<T> FindAKindOfChilds<T>() where T : class
     {
         List<T> result = new List<T>();
-        foreach (Object n in Childs)
+        foreach (Object n in Children)
         {
             if ((n as T) != null)
                 result.Add(n as T);
@@ -189,14 +188,14 @@ internal class Object
 
     public virtual Object Types(string typeName)
     {
-        if (ObjectType == typeName)
+        if (Type == typeName)
         {
             return new Object();
         }
         return null;
     }
 
-    public virtual string Attrs()
+    public virtual string StrAttributes()
     {
         string result = "";
         foreach (string key in VarAttrs.Keys)
@@ -209,7 +208,7 @@ internal class Object
     public string ChildsToString()
     {
         string result = "";
-        foreach (Object n in Childs)
+        foreach (Object n in Children)
         {
             result += n.ToString();
         }
@@ -218,12 +217,12 @@ internal class Object
 
     public override string ToString()
     {        
-        if (Childs.Count == 0)                    
-            return string.Format("<{0} {1}/>\n", ObjectType, Attrs());        
-        return string.Format("<{0} {1}>\n{2}</{0}>\n", ObjectType, Attrs(),ChildsToString());
+        if (Children.Count == 0)                    
+            return string.Format("<{0} {1}/>\n", Type, StrAttributes());        
+        return string.Format("<{0} {1}>\n{2}</{0}>\n", Type, StrAttributes(),ChildsToString());
     }
 
-    public virtual void SetAttrs(string attrs, string value)
+    public virtual void SetAttribute(string attrs, string value)
     {
         if (VarAttrs.ContainsKey(attrs))
         {
@@ -232,7 +231,7 @@ internal class Object
         else VarAttrs.Add(attrs, value);
     }
 
-    public string GetAttr(string attr)
+    public virtual string GetAttribute(string attr)
     {
         if (VarAttrs.ContainsKey(attr))
             return VarAttrs[attr];
@@ -286,7 +285,7 @@ internal class Object
         {
             if (cursor as T != null)
                 Targets.Add(cursor);
-            foreach (Object v in cursor.Childs)
+            foreach (Object v in cursor.Children)
             {
                 cursor = v;                
                 FindByType<T>();
@@ -313,7 +312,7 @@ internal class Object
                     else {;}
                 else Targets.Add(cursor);
             }
-            foreach (Object v in cursor.Childs)
+            foreach (Object v in cursor.Children)
             {
                 cursor = v;
                 FindObjectsByAttr(key, val);
@@ -323,10 +322,10 @@ internal class Object
 
         public _jq FindObjectByTag(string objectType)
         {
-            if (cursor.ObjectType == objectType)
+            if (cursor.Type == objectType)
                 Targets.Add(cursor);
 
-            foreach (Object v in cursor.Childs)
+            foreach (Object v in cursor.Children)
             {
                 cursor = v;
                 FindObjectByTag(objectType);
@@ -336,10 +335,10 @@ internal class Object
 
         public _jq Xml(string strxml)
         {
-            
+            if (strxml != "")            
             foreach (Object v in Targets)
             {
-                v.Childs.Clear();
+                v.Children.Clear();
                 XML.Read(strxml, v);
             }
             

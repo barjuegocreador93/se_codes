@@ -6,11 +6,12 @@ internal class XFinderRouter : NSResource.NCResourceItem
 
     public  bool IsSendingFinderingRouter { get; private set; }
     public RouterConfig RouterConfig { get; private set; }
+    public string Text { get; private set; }
 
     public XFinderRouter()
     {
-        ObjectType = "xfinder-router";       
-        SetAttrs("is-finding", "true");        
+        Type = "xfinder-router";       
+        SetAttribute("is-finding", "true");        
     }
 
     
@@ -19,10 +20,10 @@ internal class XFinderRouter : NSResource.NCResourceItem
     {
         InitVars();
         base.Begin();
-        block = GetAppBase().GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
-        if (block!=null)
+        Block = GetAppBase().GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
+        if (Block!=null)
         {
-            Text = block.CustomData;
+            Text = Block.CustomData;
             if (Text == "")
                 Text = "<router-config start-find='true'/>";
             RouterConfig = null;
@@ -58,20 +59,20 @@ internal class XFinderRouter : NSResource.NCResourceItem
         }
 
        
-        block = GetAppBase().GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
-        if(block!=null)
+        Block = GetAppBase().GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
+        if(Block!=null)
         {
-            if (Text != block.CustomData)
+            if (Text != Block.CustomData)
             {
                 
-                Text = block.CustomData;
+                Text = Block.CustomData;
                 if(Text=="")                
                     Text = "<router-config start-find='true'/>";                
                 RouterConfig = null;
                 jq("this").Xml(Text);
                 
             }
-            Text = block.CustomData = ChildsToString();
+            Text = Block.CustomData = ChildsToString();
             
         }     
         
@@ -81,7 +82,7 @@ internal class XFinderRouter : NSResource.NCResourceItem
 
     public override string ToString()
     {
-        return string.Format("<{0} {1}/>\n",ObjectType,Attrs());
+        return string.Format("<{0} {1}/>\n",Type,StrAttributes());
     }
 
     void InitVars()
@@ -108,8 +109,8 @@ internal class RFinderRouter : Request
 {
     public RFinderRouter()
     {
-        ObjectType = "request-connection";
-        SetAttrs("token", "");
+        Type = "request-connection";
+        SetAttribute("token", "");
     }
 
     public override void Tick()
@@ -135,7 +136,7 @@ internal class RFinderRouter : Request
     {
         public FindigRouter()
         {
-            ObjectType = "finding-router";
+            Type = "finding-router";
         }
 
         public override void Tick()
@@ -172,8 +173,8 @@ internal class RsFinderRouter : Response
 
     public RsFinderRouter()
     {
-        ObjectType = "response-connection";
-        SetAttrs("token", "");
+        Type = "response-connection";
+        SetAttribute("token", "");
         TimeDead = 0;
     }
 
@@ -221,7 +222,7 @@ internal class TFinderRouter : TaskWithTime
         jq("this").Xml(GetNetwork.Message);
         base.Tick();
         GetNetwork.ReTick = true;
-        if (Childs.Count == 0) GetNetwork.ReTick = false;
+        if (Children.Count == 0) GetNetwork.ReTick = false;
     }
 
     public override Object Types(string typeName)
@@ -242,8 +243,8 @@ internal class RouterConfig : NCComponet
 {
     public RouterConfig()
     {
-        ObjectType = "router-config";
-        SetAttrs("start-find", "false");
+        Type = "router-config";
+        SetAttribute("start-find", "false");
     }
 
     public override void Tick()
@@ -277,10 +278,10 @@ internal class Router : NCComponet
 {
     public Router()
     {
-        ObjectType = "router";
-        SetAttrs("try-to-connect", "false");
-        SetAttrs("nick", "");
-        SetAttrs("network-name", "");
+        Type = "router";
+        SetAttribute("try-to-connect", "false");
+        SetAttribute("nick", "");
+        SetAttribute("network-name", "");
     }
 
     public override void Tick()

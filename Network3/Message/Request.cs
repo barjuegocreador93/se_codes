@@ -6,36 +6,36 @@ internal class Request : NComponent
 {
     public Request()
     {
-        ObjectType = "request";
-        SetAttrs("last_ip", "");
-        SetAttrs("next_ip", "");
-        SetAttrs("owner_ip", "");
-        SetAttrs("desteny_ip", "");
-        SetAttrs("network-name", "");
-        SetAttrs("token", "");
+        Type = "request";
+        SetAttribute("last_ip", "");
+        SetAttribute("next_ip", "");
+        SetAttribute("owner_ip", "");
+        SetAttribute("desteny_ip", "");
+        SetAttribute("network-name", "");
+        SetAttribute("token", "");
     }
 
     private void CreateToken()
     {
         Random r1 = new Random();        
         string token = string.Format("{0}{1}{2}{3}", r1.Next(0, 9), r1.Next(0, 9), r1.Next(0, 9), r1.Next(0, 9));
-        SetAttrs("token", token);
+        SetAttribute("token", token);
     }
 
     public void CreateRequest(string xmlchilds,SystemOb systemTask, Task task)
     {
         jq("this").Xml(xmlchilds);
         CreateToken();        
-        task.SetAttrs("token", VarAttrs["token"]);
+        task.SetAttribute("token", VarAttrs["token"]);
         systemTask.AddChild(task);
     }
 
     public void Vars(string last_ip, string next_ip, string owner_ip, string desteny_ip)
     {
-        SetAttrs("last_ip", last_ip);
-        SetAttrs("next_ip", next_ip);
-        SetAttrs("owner_ip", owner_ip);
-        SetAttrs("desteny_ip", desteny_ip);       
+        SetAttribute("last_ip", last_ip);
+        SetAttribute("next_ip", next_ip);
+        SetAttribute("owner_ip", owner_ip);
+        SetAttribute("desteny_ip", desteny_ip);       
     }
     
 
@@ -58,27 +58,27 @@ internal class Response : NComponent
 {
     public Response()
     {
-        ObjectType = "response";
-        SetAttrs("last_ip", "");
-        SetAttrs("next_ip", "");
-        SetAttrs("owner_ip", "");
-        SetAttrs("desteny_ip", "");
-        SetAttrs("token", "");
-        SetAttrs("status", "");
+        Type = "response";
+        SetAttribute("last_ip", "");
+        SetAttribute("next_ip", "");
+        SetAttribute("owner_ip", "");
+        SetAttribute("desteny_ip", "");
+        SetAttribute("token", "");
+        SetAttribute("status", "");
     }
 
     public void CreateResponse(string xmlchild,string status = "200")
     {
         jq("this").Xml(xmlchild);
-        SetAttrs("status", status);
+        SetAttribute("status", status);
     }
 
     public void Vars(string last_ip, string next_ip, string owner_ip, string desteny_ip)
     {
-        SetAttrs("last_ip", last_ip);
-        SetAttrs("next_ip", next_ip);
-        SetAttrs("owner_ip", owner_ip);
-        SetAttrs("desteny_ip", desteny_ip);
+        SetAttribute("last_ip", last_ip);
+        SetAttribute("next_ip", next_ip);
+        SetAttribute("owner_ip", owner_ip);
+        SetAttribute("desteny_ip", desteny_ip);
     }
 
     public override void Tick()
@@ -92,8 +92,8 @@ internal class Task : NComponent
 {
     public Task()
     {
-        ObjectType = "task";
-        SetAttrs("token", "");
+        Type = "task";
+        SetAttribute("token", "");
     }
 }
 

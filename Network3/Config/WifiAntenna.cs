@@ -6,13 +6,13 @@ internal class WifiAntenna : NSResource.NCResourceItem
     private IMyRadioAntenna antenna;
     public WifiAntenna()
     {
-        ObjectType = "wifi-antenna";
-        SetAttrs("type", "public");        
+        Type = "wifi-antenna";
+        SetAttribute("type", "public");        
     }
 
     protected override void OnWorking()
     {
-        antenna = block as IMyRadioAntenna;
+        antenna = Block as IMyRadioAntenna;
         if (antenna == null) End();
     }
 

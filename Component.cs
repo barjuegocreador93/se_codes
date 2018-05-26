@@ -3,7 +3,7 @@ internal class Component : Object
 {
     public Component()
     {
-        ObjectType = "Component";
+        Type = "Component";
     }
 
     public virtual void LinkerComponent(Component compTow)

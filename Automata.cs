@@ -1,6 +1,8 @@
 ﻿
 internal class TextObject : Object
 {
+    public string Text { get; set; }
+
     public override string ToString()
     {
         return Text;
@@ -29,9 +31,13 @@ internal class XML
 
     public static Object Read(string strxml, Object container)
     {
-        strxml = strxml.Replace('\n', ' ');
-        var xml = new XML(strxml, container);
-        return xml.GetResult();
+        if (strxml != "")
+        {
+            strxml = strxml.Replace('\n', ' ');
+            var xml = new XML(strxml, container);
+            return xml.GetResult();
+        }
+        return container;            
     }
     private void Run(ref string data, int i = 0)
     {
@@ -189,7 +195,7 @@ internal class XML
             if (data[i].ToString() == "'")
             {
 
-                NewChild.SetAttrs(AttrcName, attrValue);
+                NewChild.SetAttribute(AttrcName, attrValue);
                 attrValue = AttrcName = "";
                 EndOfBeginObject(ref data, i + 1);
             }
@@ -239,7 +245,7 @@ internal class XML
         {
             if (data[i] == '>')
             {
-                if (fobject == CurrentChild.ObjectType && CurrentChild != Tree)
+                if (fobject == CurrentChild.Type && CurrentChild != Tree)
                 {
                     CurrentChild = CurrentChild.Parent;
                     Run(ref data, i + 1);

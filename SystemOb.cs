@@ -4,7 +4,7 @@ internal class SystemOb : Object
 {
     public SystemOb():base()
     {
-        ObjectType = "SystemOb";
+        Type = "SystemOb";
     }
     public void AddComponent(Component comp)
     {
@@ -20,7 +20,7 @@ internal class SystemOb : Object
     public string PrintChilds(char c = '\n')
     {
         string data = "";
-        foreach (Object m in Childs)
+        foreach (Object m in Children)
         {
             if (m as Component != null)
                 data += m.ToString() + c;
@@ -36,12 +36,12 @@ internal class SystemOb : Object
     public override void Tick()
     {
         base.Tick();
-        for(int i=0;i<Childs.Count;i++)
+        for(int i=0;i<Children.Count;i++)
         {
-            var compOne = Childs[i] as Component;
-            for (int j = i+1; j < Childs.Count; j++)
+            var compOne = Children[i] as Component;
+            for (int j = i+1; j < Children.Count; j++)
             {
-                var compTow = Childs[j] as Component;
+                var compTow = Children[j] as Component;
                 if (compOne != null && compTow != null)
                 {
                     compOne.LinkerComponent(compTow);
@@ -53,12 +53,12 @@ internal class SystemOb : Object
     
     public virtual void LinkerSystem(SystemOb other)
     {
-        for (int i = 0; i < Childs.Count; i++)
+        for (int i = 0; i < Children.Count; i++)
         {
-            Component auxOne = Childs[i] as Component;
-            for (int j = 0; j < other.Childs.Count; j++)
+            Component auxOne = Children[i] as Component;
+            for (int j = 0; j < other.Children.Count; j++)
             {
-                Component auxTwo = other.Childs[j] as Component;
+                Component auxTwo = other.Children[j] as Component;
                 if (auxOne != null && auxTwo != null)
                 {
                     auxOne.LinkerComponent(auxTwo);

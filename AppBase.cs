@@ -17,7 +17,7 @@ internal class AppBase : Object
     public AppBase():base()
     {
         endRun =beginRun = true;
-        ObjectType = "AppBase";
+        Type = "AppBase";
     }
 
     public override void Begin()

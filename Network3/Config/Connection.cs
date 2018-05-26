@@ -6,10 +6,10 @@
     public Local Local_ { get; private set; }
     public Connection()
     {       
-        ObjectType = "connection";
-        SetAttrs("nick","");
-        SetAttrs("name", "");
-        SetAttrs("auto-connection", "false");
+        Type = "connection";
+        SetAttribute("nick","");
+        SetAttribute("name", "");
+        SetAttribute("auto-connection", "false");
     }
 
     public override void Begin()
@@ -20,7 +20,7 @@
 
     public override void Tick()
     {
-        Childs.Clear();
+        Children.Clear();
         Nick = VarAttrs["nick"];
         AutoConnection = VarAttrs["auto-connection"];
         
@@ -50,11 +50,11 @@ internal class Local : Component
     public Local(Connection c)
     {
         Connection = c;
-        ObjectType = "local";
-        SetAttrs("ip", "0");
-        SetAttrs("has-connection", "false");
-        SetAttrs("parent-ip", "");
-        SetAttrs("network-name", "");
+        Type = "local";
+        SetAttribute("ip", "0");
+        SetAttribute("has-connection", "false");
+        SetAttribute("parent-ip", "");
+        SetAttribute("network-name", "");
     }
 
     public override void Tick()

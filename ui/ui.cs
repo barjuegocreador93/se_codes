@@ -1,96 +1,100 @@
-﻿/*libs*/using System;
+﻿//add-XUI.cs
 
-internal class UI : UIelement
-{    
-    public string StrRender { get; private set; }
-    public UIKeyBoard KeyBoard { get; set; }
-    public UIcursor Cursor { get; protected set; }
 
-    public UI()
+internal class ComponentUI : SResource.CResourceItem
+{
+    public XUI.XML.UIController ui { get; set;}
+    public IMyTextPanel textPanel { get; private set; }
+    public string strXML { get; private set; }
+
+    public ComponentUI()
     {
-        ObjectType = "ui";
-        SetAttrs("name", "");
-        SetAttrs("key", "secret");
-        KeyBoard = null;       
+        Type = "component-ui";
+        SetAttribute("name", "");
+        SetAttribute("key", "");
+    }
+
+    public override void Begin()
+    {
+        Block = GetAppBase().GetGemeObject<IMyTerminalBlock>(GetAttribute("name"));
+        if (Block != null)
+        {
+            strXML = Block.CustomData;
+            textPanel = Block as IMyTextPanel;
+            OnStart();
+
+        }
+        else End();
+    }
+
+    public void KeyPress(string key)
+    {
+        XML.Read(key, this);
+    }
+
+    protected override void OnWorking()
+    {
+        textPanel = Block as IMyTextPanel;
+        if (textPanel != null)
+        {
+            if (Block.CustomData != strXML)
+            {
+                strXML = Block.CustomData;
+                OnStrXMLChange();
+            }
+        }
+        else End();
+    }
+
+    protected virtual void OnStart()
+    {
+        UsingUI();
+    }
+
+    protected virtual void OnStrXMLChange()
+    {
+        UsingUI();
+    }
+
+    protected virtual void UsingUI()
+    {
+        ui = XUI.XML.UIController.FromXML(strXML);
+        ui.ApplyScreenProperties(textPanel);
+        ui.RenderTo(textPanel);
     }
 
     public override Object Types(string typeName)
     {
         switch(typeName)
         {
-            case "ui-keyboard":
-                return new UIKeyBoard();
-
-            case "ui-cursor":
-                if (Cursor == null)
-                    return Cursor = new UIcursor();
-                return null;
-
-            case "ui-element":
-                return new UIelement();
-
-            case "ui-einteract":
-                return new UIeinteract();
+            case "keypress":
+                return new KeyPress();
         }
         return null;
     }
-
-    public override void Tick()
-    {       
-        
-        Cursor = new UIcursor();
-        AddChild(Cursor);        
-        base.Tick();
-        ForChilds(uielements);
-    }
-
-    public void KeyBoardEnter(string kb)
-    {
-        KeyBoard = null;
-        XML.Read(kb,this);
-    }
-
-    private int uielements(Object v, int i)
-    {
-        var uie = v as UIelement;
-        if (v as TextObject != null)
-        {
-            Childs.RemoveAt(i);
-            return 0;
-        }
-        if (uie!= null)
-        {           
-           StrRender += uie.GlobalRender();
-        }
-        return 0;
-    }
 }
 
-internal class UIKeyBoard : Object
+
+class KeyPress :Object
 {
-    public UIKeyBoard()
+    public KeyPress()
     {
-        ObjectType = "ui-keyboard";
-        SetAttrs("value", "");
-        SetAttrs("ui-target","" );
-        SetAttrs("key", "");
+        Type = "keypress";
+        SetAttribute("key", "");
+        SetAttribute("ui-taget", "");
+        SetAttribute("secret", "");
     }
 
     public override void Tick()
     {
-        var ui = Parent as UI;
-        if(ui!=null)
+        if(Parent as ComponentUI !=null)
         {
-            if(ui.VarAttrs["key"]==VarAttrs["key"] && Parent.VarAttrs["name"]==GetAttr("ui-target"))
+            if(Parent.GetAttribute("key")==GetAttribute("secret")&& Parent.GetAttribute("name") == GetAttribute("ui-target"))
             {
-                ui.KeyBoard = this;
+                var cui = Parent as ComponentUI;
+                cui.ui.KeyPress(GetAttribute("key"));
             }
-            End();
         }
-        
+        End();
     }
-    
 }
-//add-UIcursor.cs
-//add-UIelement.cs
-//add-UIeinteract.cs

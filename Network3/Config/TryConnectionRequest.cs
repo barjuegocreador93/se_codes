@@ -2,7 +2,7 @@
 {
     public TryConnectionRequest()
     {
-        ObjectType = "try-connection-request";
+        Type = "try-connection-request";
 
     }
 
@@ -17,7 +17,7 @@ internal class TryToConnectionResponse : Response
 {
     public TryToConnectionResponse()
     {
-        ObjectType = "try-connection-response";
+        Type = "try-connection-response";
     }
 
     public override void Tick()

@@ -2,33 +2,33 @@
 
 internal class SResource : SystemOb  
 {
-    protected IMyTerminalBlock block;
-    private string text;
+    protected IMyTerminalBlock Block { get; set; }
+    private string Text;
     public SResource()
     {
-        ObjectType = "SResoruce";
-        SetAttrs("name", "");
-        block = null;
-        text = "";
+        Type = "SResoruce";
+        SetAttribute("name", "");
+        Block = null;
+        Text = "";       
     }   
 
     public override void Tick()
     {
-        block = GetAppBase().GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
-        if (block != null)
+        Block = GetAppBase().GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
+        if (Block != null)
         {
-            if(text != block.CustomData)
+            if(Text != Block.CustomData)
             {
-                Childs.Clear();
+                Children.Clear();
                 OnChanges();
-                XML.Read(block.CustomData, this);
-                text = block.CustomData;
+                XML.Read(Block.CustomData, this);
+                Text = Block.CustomData;
                 ForChilds(ChilsBegins);
                 
             }
             base.Tick();
             OnWorking();
-            text = block.CustomData = ChildsToString();
+            Text = Block.CustomData = ChildsToString();
             
         }
         else
@@ -54,12 +54,12 @@ internal class SResource : SystemOb
     public class CResourceItem : Component
     {        
 
-        protected IMyTerminalBlock block;
+        protected IMyTerminalBlock Block { get; set; }
 
         public override void Tick()
         {
-            block = GetAppBase().GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
-            if (block != null)
+            Block = GetAppBase().GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
+            if (Block != null)
             {
                 OnWorking();
                 base.Tick();
@@ -81,7 +81,7 @@ internal class SResource : SystemOb
     }
 
     public override Object Types(string typeName)
-    {
+    {        
         return base.Types(typeName);
     }
 }

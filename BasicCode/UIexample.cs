@@ -1,41 +1,87 @@
-﻿/*libs*/partial class UIexample:main{
-    internal UI ui { get; set; }
+﻿/*libs*/using System;
+
+/*libs*/partial class main{
+    internal MyExampleApp.MyApp myApp { get; set; }
 
 
     public Program()
     {
         //keyboard:
-        //<ui-keyboard ui-target='myUi' value='up' key='1234'/>
-        //<ui-keyboard ui-target='myUi' value='down' key='1234'/>
-        //<ui-keyboard ui-target='myUi' value='select' key='1234'/>
+        //<keypress ui-target='myUi' key='up' secret='1234'/>
+        //<keypress ui-target='myUi' key='down' secret='1234'/>
+        //<keypress ui-target='myUi' key='right/submit' secret='1234'/>
+        //<keypress ui-target='myUi' key='left/abort' secret='1234'/>
 
-        ui = new UI();
-        string uixml = "" +
-            "<ui-einteract/>" +
-            "<ui-einteract/>" +
-            "<ui-einteract/>" +
-            "";
-        
-        ui.SetAttrs("name", "myUi");
-        ui.SetAttrs("key", "1234");
-
-        ui.jq("this").Xml(uixml);
-        var tp = _<IMyTextPanel>("ui-example-tp");
-        (tp as IMyTerminalBlock).CustomData = ui.ChildsToString();
-        
+        myApp = new MyExampleApp.MyApp();
+        //func to filter blocks
+        myApp.FilterBlock = _s;
+        //func to take blocks by name
+        myApp.CaptureCube = captureCube;
+        myApp.SetAttribute("name", Me.CustomName);
+        myApp.Begin();
     }
 
 
     public void Main(string args)
     {
-        var text = _<IMyTerminalBlock>("ui-example-tp").CustomData;
-        //1
-        ui.jq("this").Xml(text);
-        //2
-        ui.KeyBoardEnter(args);
-        //3
-        ui.Tick();
-        _<IMyTextPanel>("ui-example-tp").WritePublicText(ui.ChildsToString());
-        _<IMyTerminalBlock>("ui-example-tp").CustomData = ui.ChildsToString();
+        myApp.Args = args;
+        myApp.Tick();
     }
 /*libs*/}
+
+
+internal partial class MyExampleApp
+{
+    internal class MyApp : AppBase
+    {
+        public MyApp()
+        {
+            AddChild(new SUIs());
+        }
+
+        public string Args { get; internal set; }
+
+        public override void Tick()
+        {
+            base.Tick();
+        }
+    }
+
+    internal class SUIs : SResource
+    {
+        public override void Begin()
+        {
+            SetAttribute("name", GetAppBase().GetAttribute("name"));
+            base.Begin();
+        }
+        public override Object Types(string typeName)
+        {
+            switch(typeName)
+            {
+                case "component-ui":
+                    return new ComponentUI();
+            }
+            return null;
+        }
+
+        public override void Tick()
+        {
+            ForChilds(uis);
+            base.Tick();
+        }
+
+        private int uis(Object v, int i)
+        {
+            var ui = v as ComponentUI;
+            if(ui!=null)
+                ui.KeyPress((Parent as MyApp).Args);
+            return 0;
+        }
+    }
+
+}
+    
+
+
+
+

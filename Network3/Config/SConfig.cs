@@ -4,7 +4,7 @@ internal class SConfig : NSResource
     public Connection Connection { get; private set; }
     public SConfig()
     {
-        ObjectType = "SConfig";
+        Type = "SConfig";
     }
 
     protected override void OnChanges()
@@ -14,14 +14,14 @@ internal class SConfig : NSResource
 
     public override void Begin()
     {
-        SetAttrs("name", GetNework.CustomName);
-        block = GetAppBase().GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
-        if (block != null)
+        SetAttribute("name", GetNework.CustomName);
+        Block = GetAppBase().GetGemeObject<IMyTerminalBlock>(VarAttrs["name"]);
+        if (Block != null)
         {
             base.Begin();
-            if(block.CustomData == "")
+            if(Block.CustomData == "")
             {
-                block.CustomData =
+                Block.CustomData =
                 "<connection name='alfa1' nick='root1' key='secret'/>" +
                 "<wifi-antenna name='nw-wifi-a' type='public'/>" +
                 "<xfinder-router name='nw-xfinder-r'/>" 

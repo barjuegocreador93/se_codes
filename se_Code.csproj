@@ -67,10 +67,7 @@
     <Compile Include="SResource.cs" />
     <Compile Include="SystemOb.cs" />
     <Compile Include="ui\ui.cs" />
-    <Compile Include="ui\UIcursor.cs" />
-    <Compile Include="ui\UIeinteract.cs" />
-    <Compile Include="ui\UIelement.cs" />
-    <Compile Include="ui\UIoptionView.cs" />
+    <Compile Include="ui\XUI.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packagesPy\PackageFile.pyc" />
@@ -80,11 +77,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packagesPy\basiCodePackage.py" />
-    <Content Include="packagesPy\Network2package.py" />
-    <Content Include="packagesPy\NetworkPackage.py" />
+    <Content Include="packagesPy\Network3package.py" />
     <Content Include="packagesPy\PackageFile.py" />
     <Content Include="packagesPy\uiPackage.py" />
     <Content Include="packagesPy\__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="BasicCode\MyExample\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
