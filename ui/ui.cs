@@ -116,3 +116,5 @@ partial class KeyPress : CComponet
     
 
 }
+
+//add-XJS/XJS.cs

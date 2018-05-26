@@ -2,8 +2,8 @@
 /*libs*/using System;
 /*libs*/using System.Collections.Generic;
 
-
-internal class Object
+//add-IObject.cs
+internal class Object : IObject
 {
     public Object Parent { get; protected set; }
     public List<Object> Children { get; set; }
@@ -364,6 +364,7 @@ internal class Object
     }
 
 }
+
 
 
 
