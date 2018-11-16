@@ -52,17 +52,12 @@
     <Compile Include="interfaces\IMyTimerBlock.cs" />
     <Compile Include="interfaces\ITerminalAction.cs" />
     <Compile Include="interfaces\MyTransmitTarget.cs" />
+    <Compile Include="json\IJSONDATA.cs" />
+    <Compile Include="json\JSON.cs" />
     <Compile Include="Models\GridTerminalSystem.cs" />
     <Compile Include="Models\ProgrammerBlock.cs" />
-    <Compile Include="Network3\Config\Connection.cs" />
-    <Compile Include="Network3\Config\SConfig.cs" />
-    <Compile Include="Network3\Config\TryConnectionRequest.cs" />
-    <Compile Include="Network3\Config\WifiAntenna.cs" />
-    <Compile Include="Network3\Config\XFinderRouter.cs" />
-    <Compile Include="Network3\Message\Request.cs" />
-    <Compile Include="Network3\Message\SMessage.cs" />
-    <Compile Include="Network3\Network.cs" />
-    <Compile Include="Network3\NetworkComponent.cs" />
+    <Compile Include="Network4\Browser.cs" />
+    <Compile Include="Network4\Network.cs" />
     <Compile Include="Object.cs" />
     <Compile Include="SResource.cs" />
     <Compile Include="SystemOb.cs" />
@@ -73,19 +68,6 @@
     <Compile Include="ui\XJS\XJS.Script.cs" />
     <Compile Include="ui\XJS\XJS.Pareser.cs" />
     <Compile Include="ui\XUI.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packagesPy\PackageFile.pyc" />
-    <None Include="packagesPy\__init__.pyc" />
-    <None Include="packagesPy\__pycache__\PackageFile.cpython-36.pyc" />
-    <None Include="packagesPy\__pycache__\__init__.cpython-36.pyc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="packagesPy\basiCodePackage.py" />
-    <Content Include="packagesPy\Network3package.py" />
-    <Content Include="packagesPy\PackageFile.py" />
-    <Content Include="packagesPy\uiPackage.py" />
-    <Content Include="packagesPy\__init__.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="BasicCode\MyExample\" />

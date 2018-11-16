@@ -1,255 +1,405 @@
 
 
-    public class JSONdata<K> : IJSONDATA
-    {
-        public T GetData<T>()
-        {
-            T result;
-            JSON.TryCast(data, out result);
-            return result;
-        }
+internal partial class Network : AppBase
+{
+    public string Data { get; set; }
+    public string Arg { get; set; }
+    Ports ports { get; set; }
+    public Config config { get; set; }    
 
-        public void SetData<T>(T value)
-        {
-            JSON.TryCast(value, out data);
-        }
-
-        public bool IsData<T>(out T result)
-        {
-            return JSON.TryCast(this, out result);
-        }
-
-        public JSONdata(K data)
-        {
-            this.data = data;
-        }
-
-        protected K data;
-
+    public override void Begin()
+    {        
+        XML.Read(Data, this);
+        base.Begin();
     }
 
-    class JSON : Dictionary<string, IJSONDATA>, IJSONDATA
+    public override void Tick()
     {
-        public T GetData<T>()
-        {
-            T result;
-            TryCast(this, out result);
-            return result;
-        }
+        base.Tick();
+        var messageBottle = new MessageBottle();
+        XML.Read(Arg, messageBottle);
+        AddChild(messageBottle.root);
+        if(messageBottle.root!=null) messageBottle.root.Tick();
+    }
 
-        public void SetData<T>(T value)
-        {
 
-            if (TryCast(value, out Dictionary<string, IJSONDATA> n))
-            {
-                Clear();
-                foreach (string k in n.Keys)
+    /// <summary>
+    /// Function for create a new child when is called by XML.Read
+    /// </summary>
+    /// <param name="typeName"></param>
+    /// <param name="parent"></param>
+    /// <returns></returns>
+    public override Object Types(string typeName, Object parent)
+    {
+        switch (typeName)
+        {
+            case "ports":
+                if(ports == null && parent as Network != null)
                 {
-                    Add(k, n[k]);
+                    ports = new Ports();
+                    return ports;
                 }
-                return;
-            }
+
+                break;
+            case "primary-port":
+                if (ports != null && ports.Primary == null && parent as Ports != null)
+                {
+                    ports.Primary = new PrimaryPort();
+                    return ports.Primary;
+                }                  
+                                    
+                break;
+            case "port":
+                if(parent as Ports != null)
+                {
+                    return new Port();
+                }
+                break;                
+
+            case "config":
+                if(config == null && parent as Network != null)
+                {
+                    config = new Config();
+                    return config;
+                }                    
+                break;
+               
+                
         }
+        return null;
+    }
 
-        public static IJSONDATA Data<T>(T value)
+    private class Ports : SystemOb
+    {
+        public PrimaryPort Primary { get; set; }
+        public Ports():base()
         {
-            return new JSONdata<T>(value);
-        }
-
-
-
-        public static bool TryCast<T>(object obj, out T result)
-        {
-            if ((T)obj != null)
-            {
-                result = (T)obj;
-                return true;
-            }
-            result = default(T);
-            return false;
-        }
-
-        public bool IsData<T>(out T result)
-        {
-            return TryCast(this, out result);
+            Type = "ports";
         }
     }
 
-    static class JSONParse
+    private class PrimaryPort : Port
     {
-        public static bool Parse(string data, out JSON json)
+        public PrimaryPort():base()
         {
-            json = new JSON();
-            return Typer(ref data, 0, ref json);
+            Type = "primary-port";
+            SetAttribute("name", "");
         }
 
-        private static int deep = 0;
-
-        private static bool Typer(ref string data, int i, ref JSON json)
+        public override void Tick()
         {
-            if (i < data.Length)
-            {
-                if (data[i] == '{')
-                {
-                    deep++;
-                    if (!onProp) return Object(ref data, i + 1, ref json);
-                    else
-                    {
-                        var ob = new JSON();
-                        json[key] = ob;
-                        key = "";
-                        deeprs.Add(json);                        
-                        return Object(ref data, i + 1, ref ob);
-                    }
-                }
-                else if(onProp && data[i]== '"' || data[i] == '\'')
-                {
-                    prop = JSON.Data("");
-                    return Str(ref data, i + 1, ref json);
-                }
-                else if (onProp && data[i] >= '0' || data[i] <= '9')
-                {
-                    dec = data[i].ToString();
-                    return Dec(ref data, i + 1, ref json);
-                }
-                else
-                {
-                    return Typer(ref data, i + 1, ref json);
-                }
-            }
-            return false;
-        }
-        private static List<JSON> deeprs;
-        private static IJSONDATA prop;
-        private static string dec;
-        private static bool Str(ref string data, int i, ref JSON json)
-        {
-            if (i < data.Length)
-            {
-                if ((data[i] == '"' || data[i] == '\''))
-                {
-                    json[key] = prop;
-                    return Next(ref data, i + 1, ref json);
-                }
-                else
-                {
-                    prop.SetData(prop.GetData<string>()+data[i]);
-                    return Str(ref data, i + 1, ref json);
-                }
-            }
-            return false;
+            base.Tick();            
         }
 
-        private static bool Dec(ref string data, int i, ref JSON json)
+        
+    }
+
+    private class Port : CBlock<IMyTerminalBlock>
+    {
+        public Port():base()
         {
-            if (i < data.Length)
-            {
-                if (data[i] >= '0' || data[i] <= '9')
-                {
-                    dec += data[i].ToString();
-                }else if(data[i]==',' ){
-                    json[key] = JSON.Data(decimal.Parse(dec));
-                    key = "";
-                    return Key(ref data, i + 1, ref json);
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            return false;
+            Type = "port";
+            SetAttribute("block-type", "");
+            SetAttribute("type", "");
+
         }
 
-        private static bool Next(ref string data, int i, ref JSON json)
+        internal void SendMessage(MessageBottle n)
         {
-            if (i < data.Length)
+            
+            switch(VarAttrs["block-type"])
             {
-                if ((data[i] == ','))
-                {
-                    key = "";
-                    return Key(ref data, i + 1, ref json);
-                }
-                if((data[i] == '}'))
-                {
+                case "Antenna":
                     
-                    deep--;
-                    if (deep == 0) return true;
-                    var last = deeprs[deep];
-                    deeprs.RemoveAt(deep);
-                    return Typer(ref data, i + 1, ref last);
-                }
-                else
-                {
-                    return Next(ref data, i + 1, ref json);
-                }
-            }
-            return false;
-        }
+                    MyTransmitTarget m;
+                    if (n.MetaData == null) AppBase.Debug("wow");
+                    switch (n.MetaData.VarAttrs["method"])
+                    {
+                        case "Public": m = MyTransmitTarget.Everyone; break;
+                        case "Private": m = MyTransmitTarget.Ally; break;
+                        case "Protected": m = MyTransmitTarget.Ally; break;
+                        default: m =MyTransmitTarget.Default; break;
+                    }
+                    
+                    AppBase.Debug("Sending: " + n.ToString());
+                    ((IMyRadioAntenna)Block).TransmitMessage(n.ToString(), m);
+                    
+                    break;
+                case "LaserAntenna":
+                    AppBase.Debug("Sending: " + n.ToString());
+                    ((IMyLaserAntenna)Block).TransmitMessage(n.ToString());
+                    break;
 
-        private static bool onKey = true;
-
-        private static bool Object(ref string data, int i, ref JSON json)
-        {
-            if (i < data.Length)
-            {
-                if (onKey && (data[i] == '"' || data[i] == '\''))
-                {
-                    return Key(ref data, i + 1, ref json);
-                }
-                else
-                {
-                    return Object(ref data, i + 1, ref json);
-                }
             }
-            return false;
-        }
-        private static string key = "";
-        public static bool Key(ref string data, int i, ref JSON json)
-        {
-            if (i < data.Length)
-            {
-                if ((data[i] == '"' || data[i] == '\''))
-                {
-                    onKey = false;
-                    json.Add(key, null);
-                    return Prop(ref data, i + 1, ref json);
-                }
-                else
-                {
-                    key += data[i];
-                    return Key(ref data, i + 1, ref json);
-                }
-            }
-            return false;
-        }
-        private static bool onProp = false;
-        public static bool Prop(ref string data, int i, ref JSON json)
-        {
-            if (i < data.Length)
-            {
-                if ((data[i] == ':'))
-                {
-                    onProp = true;
-                    return Typer(ref data, i + 1, ref json);
-                }
-                else
-                {
-                    return Key(ref data, i + 1, ref json);
-                }
-            }
-            return false;
+            
         }
     }
 
-
-
-    public interface IJSONDATA
+    public class Config : SystemOb
     {
-        T GetData<T>();
-        void SetData<T>(T value);
-        bool IsData<T>(out T result);
+        public Config():base()
+        {
+            SetAttribute("ip", "");
+            SetAttribute("namespace", "");
+        }
     }
 
+    private class CBlock<T>  : Component where T:class
+    {
+        
+        protected T Block { get; set; }
+        public override void Tick()
+        {
+            if (Block == null && VarAttrs.ContainsKey("name"))
+            {
+                Block = AppBase.GetGemeObject<T>(VarAttrs["name"]);
+                if (Block == null)
+                {                    
+                    AppBase.Debug("Block with name '" + VarAttrs["name"] + "' not exist.");
+                    End();
+                }
+            }
+
+            if (!VarAttrs.ContainsKey("name"))
+            {
+                AppBase.Debug("Tag "+Type+" no have a attribute name.");
+                End();
+            }
+        }
+    }
+
+
+    private class MessageBottle : SystemOb
+    {
+        public Meta MetaData { get; set; }
+        public Body MBody { get; set; }
+        private bool IsRoot;
+        public MessageBottle root;
+        public MessageBottle()
+        {
+            Type = "message-bottle";
+            IsRoot = true;
+        }
+
+        /// <summary>
+        /// Function for create a new child when is called by XML.Read
+        /// </summary>
+        /// <param name="typeName"></param>
+        /// <param name="parent"></param>
+        /// <returns></returns>
+        public override Object Types(string typeName, Object parent)
+        {
+            switch (typeName)
+            {
+                case "message-bottle":
+                    var p = parent as MessageBottle;
+                    if (p != null)
+                    {
+                        if (p.IsRoot)
+                        {
+                            root = new MessageBottle();
+                            root.IsRoot = false;
+                            return root;
+                        }
+                    }
+                    break;
+
+                case "meta":
+                    if (parent as MessageBottle != null)
+                    {
+                        if (((MessageBottle)parent).MetaData == null)
+                        {
+                            ((MessageBottle)parent).MetaData = new Meta();
+                            return ((MessageBottle)parent).MetaData;
+                        }
+                        
+                    }
+                    break;
+                case "body":
+                    {
+                        if (parent as MessageBottle != null)
+                        {
+                            if (((MessageBottle)parent).MBody== null)
+                            {
+                                ((MessageBottle)parent).MBody = new Body();
+                                return ((MessageBottle)parent).MBody;
+                            }
+
+                        }
+                        break;
+                    }
+                case "send":
+                    if(parent as MessageBottle != null && MetaData == null)
+                    {
+
+                    }
+                    break;
+                    
+
+            }
+            return null;
+        }
+
+        public override void Tick()
+        {
+            
+            base.Tick();
+        }
+
+        public class Meta : Component
+        {
+            public Meta()
+            {
+                Type = "meta";
+                SetAttribute("ip-desteny", "");
+                SetAttribute("ip-origin", "");
+                SetAttribute("path", "");
+                SetAttribute("port", "");
+                SetAttribute("namespace", "");
+                //Public | Private
+                SetAttribute("method", "");
+            }
+
+            public override void Tick()
+            {                
+                var network = AppBase as Network;
+                var mbottle = System as MessageBottle;
+                var paths = new List<string>(VarAttrs["path"].Split(','));
+                if(network.config != null)
+                {                  
+                    if (!paths.Contains(network.config.VarAttrs["namespace"]+"/"+network.config.VarAttrs["ip"]))
+                    {
+                        if(network.config.VarAttrs["namespace"] == VarAttrs["namespace"])
+                        {
+                            VarAttrs["path"] +=","+network.config.VarAttrs["namespace"] + "/" + network.config.VarAttrs["ip"];
+                            if (network.config.VarAttrs["ip"] == VarAttrs["ip-desteny"])
+                            {
+                                if (VarAttrs["port"] != "")
+                                    network.SendPortMessage(mbottle);
+                                else AppBase.Debug("Recibing: " + mbottle.MBody.ToString());
+                            }
+                            else
+                                network.SendNetworkMessage(mbottle);
+                        }
+                        else
+                        {
+                            var a_msg_nsp = VarAttrs["namespace"].Split('.');
+                            var a_nsp = network.config.VarAttrs["namespace"].Split('.');
+                            bool namespace_found = false;
+                            VarAttrs["path"] += "," + network.config.VarAttrs["namespace"] + "/" + network.config.VarAttrs["ip"];
+
+                            if (a_msg_nsp.Length > a_nsp.Length)
+                            {
+                                int k = -1;
+                                foreach (string j in a_nsp)
+                                {
+                                    if(a_msg_nsp[++k]!= j)
+                                    {
+                                        mbottle.End();
+                                        return;
+                                    }
+                                }
+                                network.ports.ForChilds((Object n, int i) =>
+                                {
+                                    var x = n as Port;
+                                    if (x != null)
+                                    {
+                                        if(x.VarAttrs["type"]=="namespace" && x.VarAttrs["name"] == a_msg_nsp[k + 1])
+                                        {
+                                            x.SendMessage(mbottle);
+                                            namespace_found = true;
+                                            return -1;
+                                        }
+                                    }
+                                    return 0;
+                                });
+                                if (!namespace_found)
+                                {
+                                    network.SendNetworkMessage(mbottle);
+                                }
+                            }else if(a_msg_nsp.Length < a_nsp.Length)
+                            {
+                                int k = -1;
+                                foreach (string j in a_msg_nsp)
+                                {
+                                    if (a_nsp[++k] != j)
+                                    {
+                                        mbottle.End();
+                                        return;
+                                    }
+                                }
+                                network.ports.ForChilds((Object n, int i) =>
+                                {
+                                    var x = n as Port;
+                                    if (x != null)
+                                    {
+                                        if (x.VarAttrs["type"] == "namespace" && x.VarAttrs["name"] == a_msg_nsp[k])
+                                        {
+                                            x.SendMessage(mbottle);
+                                            namespace_found = true;
+                                            return -1;
+                                        }
+                                    }
+                                    return 0;
+                                });
+                            }
+
+                        }
+                        
+                    }
+                    mbottle.End();
+                }
+                
+            }
+        }
+
+        public class Body : Component
+        {
+           public Body()
+            {
+                Type = "body";
+            }
+        }
+    }
+
+    private void SendNetworkMessage(MessageBottle n)
+    {
+        ports.Primary.SendMessage(n);
+    }
+
+    private void SendPortMessage(MessageBottle n)
+    {
+        ports.ForChilds((Object x, int i) =>
+        {
+            var port = x as Port;
+            if(port != null)
+            {
+                if (port.VarAttrs["name"] == n.MetaData.VarAttrs["port"])
+                {
+                    port.SendMessage(n);
+                    return -1;
+                }
+            }            
+            return 0;
+        }); 
+    }
+}
+
+    Network app = new Network();
+    public Program()
+    {
+        app.CaptureCube = captureCube;
+        app.Debug = debug;
+        app.Data = Me.CustomData;
+        app.FilterBlock = _s;
+        app.Begin();
+    }
+
+    public void Main(string arg)
+    {
+        app.Arg = arg;
+        app.Tick();
+    }
 
 
 internal class AppBase : Object
@@ -284,11 +434,7 @@ internal class AppBase : Object
     }
     
 
-    protected void Linkersystem(SystemOb sysOne, SystemOb sysTwo)
-    {
-        sysOne.LinkerSystem(sysTwo);
-        sysTwo.LinkerSystem(sysOne);        
-    }
+    
 
     public override void End()
     {
@@ -358,38 +504,9 @@ internal class SystemOb : Object
 
     public override void Tick()
     {
-        base.Tick();
-        for(int i=0;i<Children.Count;i++)
-        {
-            var compOne = Children[i] as Component;
-            for (int j = i+1; j < Children.Count; j++)
-            {
-                var compTow = Children[j] as Component;
-                if (compOne != null && compTow != null)
-                {
-                    compOne.LinkerComponent(compTow);
-                    compTow.LinkerComponent(compOne);
-                }
-            }
-        }
-    }
+        base.Tick();        
+    }    
     
-    public virtual void LinkerSystem(SystemOb other)
-    {
-        for (int i = 0; i < Children.Count; i++)
-        {
-            Component auxOne = Children[i] as Component;
-            for (int j = 0; j < other.Children.Count; j++)
-            {
-                Component auxTwo = other.Children[j] as Component;
-                if (auxOne != null && auxTwo != null)
-                {
-                    auxOne.LinkerComponent(auxTwo);
-                    
-                }
-            }
-        }
-    }
 }
 
 internal class Component : Object
@@ -455,7 +572,7 @@ internal interface IObject
 
 internal class Object : IObject
 {
-    public Object Parent { get; protected set; }
+    public Object Parent { get; set; }
     public List<Object> Children { get; set; }
     
     public string Type { get; protected set; }
@@ -594,10 +711,10 @@ internal class Object : IObject
         size = Children.Count;
         if(i<Children.Count)
         {
-            n(Children[i],i);
-            if(size>Children.Count)
+            int result = n(Children[i],i);
+            if(size>Children.Count && result == 0)
                 ForChilds(n, i);
-            else
+            else if(result == 0)
                 ForChilds(n, i+1);
         }
     }
@@ -636,7 +753,7 @@ internal class Object : IObject
         return result;
     }
 
-    public virtual Object Types(string typeName)
+    public virtual Object Types(string typeName, Object parent=null)
     {
         if (Type == typeName)
         {
@@ -1076,7 +1193,7 @@ internal class XML
             {
                 if (i + 2 < data.Length)
                 {
-                    if (data[i + 1].ToString() == "'")
+                    if (data[i + 1] == '\'' || data[i + 1] == '"')
                     {
                         attrValue = "";
                         AttrValue(ref data, i + 2);
@@ -1184,7 +1301,7 @@ internal class XML
 
     private bool HasNewChild(int i)
     {
-        NewChild = Tree.Types(TypeName);
+        NewChild = Tree.Types(TypeName,CurrentChild);
         TypeNameLength = TypeName.Length;
         INoObject = i - TypeNameLength - 1;
         TypeName = "";
@@ -1276,8 +1393,5 @@ internal class SResource : SystemOb
 
     }
 
-    public override Object Types(string typeName)
-    {        
-        return base.Types(typeName);
-    }
+    
 }

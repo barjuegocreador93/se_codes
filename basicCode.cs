@@ -1,7 +1,7 @@
 ﻿/*libs*/using System.Collections.Generic;
 /*libs*/using System;
 
-/*libs*/partial class main{
+/*libs*/partial class Program{
 
     IMyTerminalBlock captureCube(string _obj)
     {

@@ -165,7 +165,7 @@ internal class XML
             {
                 if (i + 2 < data.Length)
                 {
-                    if (data[i + 1].ToString() == "'")
+                    if (data[i + 1] == '\'' || data[i + 1] == '"')
                     {
                         attrValue = "";
                         AttrValue(ref data, i + 2);
@@ -273,7 +273,7 @@ internal class XML
 
     private bool HasNewChild(int i)
     {
-        NewChild = Tree.Types(TypeName);
+        NewChild = Tree.Types(TypeName,CurrentChild);
         TypeNameLength = TypeName.Length;
         INoObject = i - TypeNameLength - 1;
         TypeName = "";

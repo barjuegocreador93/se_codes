@@ -80,8 +80,5 @@ internal class SResource : SystemOb
 
     }
 
-    public override Object Types(string typeName)
-    {        
-        return base.Types(typeName);
-    }
+    
 }

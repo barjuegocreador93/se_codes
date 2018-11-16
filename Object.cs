@@ -11,7 +11,7 @@ internal interface IObject
 
 internal class Object : IObject
 {
-    public Object Parent { get; protected set; }
+    public Object Parent { get; set; }
     public List<Object> Children { get; set; }
     
     public string Type { get; protected set; }
@@ -150,10 +150,10 @@ internal class Object : IObject
         size = Children.Count;
         if(i<Children.Count)
         {
-            n(Children[i],i);
-            if(size>Children.Count)
+            int result = n(Children[i],i);
+            if(size>Children.Count && result == 0)
                 ForChilds(n, i);
-            else
+            else if(result == 0)
                 ForChilds(n, i+1);
         }
     }
@@ -192,7 +192,7 @@ internal class Object : IObject
         return result;
     }
 
-    public virtual Object Types(string typeName)
+    public virtual Object Types(string typeName, Object parent=null)
     {
         if (Type == typeName)
         {

@@ -38,11 +38,7 @@ internal class AppBase : Object
     }
     
 
-    protected void Linkersystem(SystemOb sysOne, SystemOb sysTwo)
-    {
-        sysOne.LinkerSystem(sysTwo);
-        sysTwo.LinkerSystem(sysOne);        
-    }
+    
 
     public override void End()
     {
